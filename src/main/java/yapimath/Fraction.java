@@ -21,22 +21,22 @@ public class Fraction {
 
     private static final BigInteger BTWO = BigInteger.valueOf(2);
 
-    private static MathContext mathContext = new MathContext(200, RoundingMode.HALF_UP);
-
-    public static void setPrecision(int precision) {
-        if (precision == 0) {
-            defaultPrecision();
-            return;
-        }
-        mathContext = new MathContext(precision, RoundingMode.HALF_UP);
-    }
+    private static MathContext precision = new MathContext(200, RoundingMode.HALF_UP);
 
     public static void setCalculationPrecision(int precision) {
-        setPrecision(precision);
+        if (precision == 0) {
+            allDefaultPrecision();
+            return;
+        }
+        Fraction.precision = new MathContext(precision, RoundingMode.HALF_UP);
     }
 
-    public static void defaultPrecision() {
-        mathContext = new MathContext(200, RoundingMode.HALF_UP);
+    public static void setCalculationPrecision(MathContext mathContext) {
+        Fraction.precision = mathContext;
+    }
+
+    public static void allDefaultPrecision() {
+        precision = new MathContext(200, RoundingMode.HALF_UP);
     }
 
     private BigInteger numerator;
@@ -45,6 +45,8 @@ public class Fraction {
     private boolean percent = false;
 
     private boolean shorten = true;
+
+    private MathContext mathContext = precision;
 
     public Fraction(long number) {
         numerator = BigInteger.valueOf(number);
@@ -139,7 +141,7 @@ public class Fraction {
                 // Ignore
             }
             try {
-                return new Fraction(new BigDecimal(number.substring(0, number.length() - 1)).divide(BigDecimal.valueOf(100), mathContext)).setPercent(true);
+                return new Fraction(new BigDecimal(number.substring(0, number.length() - 1)).divide(BigDecimal.valueOf(100), precision)).setPercent(true);
             } catch (NumberFormatException e) {
                 // Ignore
             }
@@ -419,6 +421,22 @@ public class Fraction {
 
     public Fraction copy() {
         return new Fraction(numerator, denominator);
+    }
+
+    public void setPrecision(int precision) {
+        if (precision == 0) {
+            defaultPrecision();
+            return;
+        }
+        mathContext = new MathContext(precision, RoundingMode.HALF_UP);
+    }
+
+    public void setPrecision(MathContext mathContext) {
+        this.mathContext = mathContext;
+    }
+
+    public void defaultPrecision() {
+        mathContext = new MathContext(200, RoundingMode.HALF_UP);
     }
 
     public Fraction setMixed(boolean mixed) {
