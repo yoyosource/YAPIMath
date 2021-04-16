@@ -145,6 +145,14 @@ public class Matrix {
         return result;
     }
 
+    public Matrix square() {
+        return power(2);
+    }
+
+    public Matrix cube() {
+        return power(3);
+    }
+
     public Matrix power(int power) {
         Matrix result = this;
         for (int i = 0; i < power; i++) {
