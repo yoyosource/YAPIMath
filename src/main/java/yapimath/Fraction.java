@@ -8,12 +8,12 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-public class Fraction {
+public class Fraction implements Comparable<Fraction> {
 
     /**
      * Fraction Presets
      */
-    public static final Fraction NEGATION = new Fraction(-1, 0);
+    public static final Fraction NEGATION = new Fraction(-1, 1);
     public static final Fraction ZERO = new Fraction(0, 1);
     public static final Fraction ONE = new Fraction(1, 1);
     public static final Fraction TWO = new Fraction(2, 1);
@@ -581,4 +581,14 @@ public class Fraction {
     public int hashCode() {
         return Objects.hash(numerator, denominator);
     }
+
+    @Override
+    public int compareTo(Fraction o) {
+        if (numerator.compareTo(o.numerator) == 0 && denominator.compareTo(o.denominator) == 0) {
+            return 0;
+        }
+        // TODO: check greater or less. Uses LeastCommonMultiple!
+        return Integer.MAX_VALUE;
+    }
+
 }

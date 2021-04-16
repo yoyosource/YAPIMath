@@ -4,24 +4,60 @@ import yapimath.Fraction;
 
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Arrays;
 
 public class Matrix {
 
     public static void main(String[] args) {
         Matrix matrix1 = new Matrix(3, 3);
-        matrix1.set(0, 0, Fraction.valueOf(1));
-        matrix1.set(1, 0, Fraction.valueOf(2));
-        matrix1.set(2, 0, Fraction.valueOf(3));
-        matrix1.set(0, 1, Fraction.valueOf(4));
-        matrix1.set(1, 1, Fraction.valueOf(5));
-        matrix1.set(2, 1, Fraction.valueOf(6));
-        matrix1.set(0, 2, Fraction.valueOf(7));
-        matrix1.set(1, 2, Fraction.valueOf(8));
-        matrix1.set(2, 2, Fraction.valueOf(9));
+        matrix1.set(0, 0, Fraction.valueOf(8));
+        matrix1.set(1, 0, Fraction.valueOf(6));
+        matrix1.set(2, 0, Fraction.valueOf(9));
+        matrix1.set(0, 1, Fraction.valueOf(5));
+        matrix1.set(1, 1, Fraction.valueOf(3));
+        matrix1.set(2, 1, Fraction.valueOf(4));
+        matrix1.set(0, 2, Fraction.valueOf(1));
+        matrix1.set(1, 2, Fraction.valueOf(7));
+        matrix1.set(2, 2, Fraction.valueOf(2));
+
+        Matrix matrix2 = new Matrix(3, 3);
+        matrix2.set(0, 0, Fraction.valueOf(6));
+        matrix2.set(1, 0, Fraction.valueOf(9));
+        matrix2.set(2, 0, Fraction.valueOf(8));
+        matrix2.set(0, 1, Fraction.valueOf(3));
+        matrix2.set(1, 1, Fraction.valueOf(4));
+        matrix2.set(2, 1, Fraction.valueOf(5));
+        matrix2.set(0, 2, Fraction.valueOf(7));
+        matrix2.set(1, 2, Fraction.valueOf(2));
+        matrix2.set(2, 2, Fraction.valueOf(1));
+
+        System.out.println(matrix1.multiply(matrix2));
+        System.out.println();
+        System.out.println(matrix1.adjugate());
+        System.out.println();
+        System.out.println(matrix1.inverse());
+        System.out.println();
         System.out.println(matrix1);
-        System.out.println(matrix1.det());
-        System.out.println(matrix1.multiply(matrix1));
+        System.out.println();
+        System.out.println(matrix1.transpose());
+        System.out.println();
+        System.out.println(matrix1.inverse().multiply(matrix1));
+        System.out.println();
+
+        Matrix matrix3 = new Matrix(3, 3);
+        matrix3.set(0, 0, Fraction.valueOf(0.6));
+        matrix3.set(1, 0, Fraction.valueOf(0.15));
+        matrix3.set(2, 0, Fraction.valueOf(0.25));
+        matrix3.set(0, 1, Fraction.valueOf(0.05));
+        matrix3.set(1, 1, Fraction.valueOf(0.8));
+        matrix3.set(2, 1, Fraction.valueOf(0.15));
+        matrix3.set(0, 2, Fraction.valueOf(0.2));
+        matrix3.set(1, 2, Fraction.valueOf(0.05));
+        matrix3.set(2, 2, Fraction.valueOf(0.75));
+
+        System.out.println(matrix3.multiply(matrix3));
+        System.out.println();
+        System.out.println(matrix3.inverse().multiply(matrix3));
+        System.out.println();
     }
 
     private Fraction[][] fractions;
@@ -77,7 +113,7 @@ public class Matrix {
 
     public Matrix add(Matrix matrix) {
         checkSize(matrix);
-        return copy(rows, columns, matrixValue -> {
+        return copy(matrixValue -> {
             matrixValue.fraction = matrixValue.fraction.add(matrix.get(matrixValue.row, matrixValue.column));
             return matrixValue;
         });
@@ -85,14 +121,14 @@ public class Matrix {
 
     public Matrix sub(Matrix matrix) {
         checkSize(matrix);
-        return copy(rows, columns, matrixValue -> {
+        return copy(matrixValue -> {
             matrixValue.fraction = matrixValue.fraction.subtract(matrix.get(matrixValue.row, matrixValue.column));
             return matrixValue;
         });
     }
 
     public Matrix multiply(Fraction fraction) {
-        return copy(rows, columns, matrixValue -> {
+        return copy(matrixValue -> {
             matrixValue.fraction = matrixValue.fraction.multiply(fraction);
             return matrixValue;
         });
@@ -118,7 +154,7 @@ public class Matrix {
     }
 
     public Matrix divide(Fraction fraction) {
-        return copy(rows, columns, matrixValue -> {
+        return copy(matrixValue -> {
             matrixValue.fraction = matrixValue.fraction.divide(fraction);
             return matrixValue;
         });
@@ -134,8 +170,21 @@ public class Matrix {
         });
     }
 
+    public Matrix adjugate() {
+        checkQuadratic("No adjugate, Matrix needs to be quadratic");
+        return copy(matrixValue -> {
+            Fraction determinant = subMatrix(matrixValue.column, matrixValue.row).det();
+            if (((matrixValue.column % 2) + (matrixValue.row % 2)) % 2 == 1) {
+                determinant = determinant.multiply(Fraction.NEGATION);
+            }
+            matrixValue.fraction = determinant;
+            return matrixValue;
+        }).transpose();
+    }
+
     public Matrix inverse() {
-        return this;
+        checkQuadratic("No inverse, Matrix needs to be quadratic");
+        return adjugate().multiply(Fraction.ONE.divide(det()));
     }
 
     public Fraction det() {
@@ -146,20 +195,25 @@ public class Matrix {
 
         Fraction fraction = Fraction.ZERO;
         for (int i = 0; i < columns; i++) {
-            Fraction det = get(0, i).multiply(subMatrix(i).det());
+            Fraction det = get(0, i).multiply(subMatrix(i, 0).det());
             fraction = (i % 2 == 0) ? fraction.add(det) : fraction.subtract(det);
         }
         return fraction;
     }
 
-    private Matrix subMatrix(int column) {
+    private Matrix subMatrix(int column, int row) {
         Matrix matrix = new Matrix(rows - 1, columns - 1);
-        int internalColumn = (column + 1) % columns;
-        for (int i = 0; i < columns - 1; i++) {
-            for (int j = 0; j < rows - 1; j++) {
-                matrix.set(j, i, get(j + 1, internalColumn));
+        int internalRow = 0;
+        int internalColumn = 0;
+        for (int i = 0; i < columns; i++) {
+            if (i == column) continue;
+            for (int j = 0; j < rows; j++) {
+                if (j == row) continue;
+                matrix.set(internalRow, internalColumn, get(j, i));
+                internalRow++;
             }
-            internalColumn = (internalColumn + 1) % columns;
+            internalColumn++;
+            internalRow = 0;
         }
         return matrix;
     }
@@ -230,13 +284,29 @@ public class Matrix {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Matrix{");
-        sb.append("fractions=").append(Arrays.deepToString(fractions));
-        sb.append(", rows=").append(rows);
-        sb.append(", columns=").append(columns);
-        sb.append(", precision=").append(precision);
-        sb.append('}');
-        return sb.toString();
+        int max = 0;
+        for (int i = 0; i < columns; i++) {
+            for (int j = 0; j < rows; j++) {
+                max = Math.max(max, get(j, i).encodeFlat().length());
+            }
+        }
+
+        StringBuilder st = new StringBuilder();
+        for (int j = 0; j < rows; j++) {
+            if (j != 0) st.append("\n");
+            for (int i = 0; i < columns; i++) {
+                if (i != 0) st.append("  ");
+                st.append(pad(get(j, i), max));
+            }
+        }
+        return st.toString();
+    }
+
+    private final String pad = "                                                                ";
+
+    private String pad(Fraction fraction, int length) {
+        String s = fraction.encodeFlat();
+        return s + pad.substring(0, length - s.length());
     }
 
 }
