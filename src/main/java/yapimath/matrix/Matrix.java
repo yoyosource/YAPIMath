@@ -69,6 +69,18 @@ public class Matrix<T extends MatrixNumber<T>> {
         System.out.println();
         System.out.println(matrix3.inverse().multiply(matrix3));
         System.out.println();
+
+        Matrix<ComplexFraction> matrix4 = Matrix.createComplexFractionMatrix(3, 3);
+        matrix4.set(0, 0, ComplexFraction.valueOf(0.6, 0.5));
+        matrix4.set(1, 0, ComplexFraction.valueOf(0.15));
+        matrix4.set(2, 0, ComplexFraction.valueOf(0.25));
+        matrix4.set(0, 1, ComplexFraction.valueOf(0.05));
+        matrix4.set(1, 1, ComplexFraction.valueOf(0.8));
+        matrix4.set(2, 1, ComplexFraction.valueOf(0.15));
+        matrix4.set(0, 2, ComplexFraction.valueOf(0.2));
+        matrix4.set(1, 2, ComplexFraction.valueOf(0.05));
+        matrix4.set(2, 2, ComplexFraction.valueOf(0.75));
+        System.out.println(matrix4);
     }
 
     public static Matrix<Fraction> createFractionMatrix(int rows, int columns) {
@@ -109,9 +121,9 @@ public class Matrix<T extends MatrixNumber<T>> {
         return numbers[column][row];
     }
 
-    public void set(int row, int column, T fraction) {
-        if (fraction == null) return;
-        numbers[column][row] = fraction;
+    public void set(int row, int column, T number) {
+        if (number == null) return;
+        numbers[column][row] = number;
     }
 
     private void checkSize(Matrix<T> matrix) {

@@ -23,21 +23,6 @@ public class Fraction implements Comparable<Fraction>, Number<Fraction> {
 
     public static final ConstantHolder<Fraction> FRACTION_CONSTANT_HOLDER = new ConstantHolder<>(ZERO, ONE, NEGATION);
 
-    @Override
-    public Fraction getZero() {
-        return ZERO;
-    }
-
-    @Override
-    public Fraction getOne() {
-        return ONE;
-    }
-
-    @Override
-    public Fraction getNegation() {
-        return NEGATION;
-    }
-
     private static final BigInteger BTWO = BigInteger.valueOf(2);
 
     private static MathContext precision = new MathContext(200, RoundingMode.HALF_UP);

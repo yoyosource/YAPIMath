@@ -20,19 +20,12 @@ public class ComplexFraction implements ComplexNumber<ComplexFraction> {
 
     public static final ConstantHolder<ComplexFraction> COMPLEX_FRACTION_CONSTANT_HOLDER = new ConstantHolder<>(ZERO, ONE, NEGATION);
 
-    @Override
-    public ComplexFraction getZero() {
-        return ZERO;
+    public static ComplexFraction valueOf(double d) {
+        return new ComplexFraction(Fraction.valueOf(d));
     }
 
-    @Override
-    public ComplexFraction getOne() {
-        return ONE;
-    }
-
-    @Override
-    public ComplexFraction getNegation() {
-        return NEGATION;
+    public static ComplexFraction valueOf(double real, double imaginary) {
+        return new ComplexFraction(Fraction.valueOf(real), Fraction.valueOf(imaginary));
     }
 
     private Fraction real;
@@ -145,12 +138,7 @@ public class ComplexFraction implements ComplexNumber<ComplexFraction> {
     }
 
     public String encodeFlat() {
-        StringBuilder st = new StringBuilder();
-        st.append(real.encodeFlat());
-        if (imaginary.compareTo(Fraction.ZERO) != 0) {
-            st.append("+").append(imaginary.encodeFlat()).append("i");
-        }
-        return st.toString();
+        return real.encodeFlat() + " + " + imaginary.encodeFlat() + "i";
     }
 
 }
