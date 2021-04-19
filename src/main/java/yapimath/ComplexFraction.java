@@ -144,4 +144,13 @@ public class ComplexFraction implements ComplexNumber<ComplexFraction> {
         return complexFractions;
     }
 
+    public String encodeFlat() {
+        StringBuilder st = new StringBuilder();
+        st.append(real.encodeFlat());
+        if (imaginary.compareTo(Fraction.ZERO) != 0) {
+            st.append("+").append(imaginary.encodeFlat()).append("i");
+        }
+        return st.toString();
+    }
+
 }

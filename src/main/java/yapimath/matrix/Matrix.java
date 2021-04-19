@@ -76,7 +76,7 @@ public class Matrix<T extends MatrixNumber<T>> {
     }
 
     public static Matrix<ComplexFraction> createComplexFractionMatrix(int rows, int columns) {
-        return new Matrix<>(rows, columns, (irows, icolumns) -> new ComplexFraction[icolumns][irows], ComplexFraction.COMPLEX_FRACTION_CONSTANT_HOLDER, ComplexFraction::toString);
+        return new Matrix<>(rows, columns, (irows, icolumns) -> new ComplexFraction[icolumns][irows], ComplexFraction.COMPLEX_FRACTION_CONSTANT_HOLDER, ComplexFraction::encodeFlat);
     }
 
     private BiFunction<Integer, Integer, T[][]> arrayCreator;
