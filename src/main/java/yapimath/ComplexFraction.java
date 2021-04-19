@@ -1,10 +1,39 @@
 package yapimath;
 
+import yapimath.number.ComplexNumber;
+import yapimath.number.ConstantHolder;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-public class ComplexFraction {
+public class ComplexFraction implements ComplexNumber<ComplexFraction> {
+
+    /**
+     * Fraction Presets
+     */
+    public static final ComplexFraction NEGATION = new ComplexFraction(Fraction.NEGATION, Fraction.ZERO);
+    public static final ComplexFraction ZERO = new ComplexFraction(Fraction.ZERO, Fraction.ZERO);
+    public static final ComplexFraction ONE = new ComplexFraction(Fraction.ONE, Fraction.ZERO);
+    public static final ComplexFraction TWO = new ComplexFraction(Fraction.TWO, Fraction.ZERO);
+    public static final ComplexFraction TEN = new ComplexFraction(Fraction.TEN, Fraction.ZERO);
+
+    public static final ConstantHolder<ComplexFraction> COMPLEX_FRACTION_CONSTANT_HOLDER = new ConstantHolder<>(ZERO, ONE, NEGATION);
+
+    @Override
+    public ComplexFraction getZero() {
+        return ZERO;
+    }
+
+    @Override
+    public ComplexFraction getOne() {
+        return ONE;
+    }
+
+    @Override
+    public ComplexFraction getNegation() {
+        return NEGATION;
+    }
 
     private Fraction real;
     private Fraction imaginary;
@@ -18,9 +47,7 @@ public class ComplexFraction {
     public ComplexFraction(Fraction real, Fraction imaginary) {
         this.real = real;
         this.imaginary = imaginary;
-
-        this.real.setPrecision(precision);
-        this.imaginary.setPrecision(precision);
+        setPrecision(precision);
     }
 
     public ComplexFraction add(Fraction fraction) {
@@ -57,6 +84,12 @@ public class ComplexFraction {
 
     public ComplexFraction multiply(ComplexFraction complexFraction) {
         return new ComplexFraction(real.multiply(complexFraction.real).subtract(imaginary.multiply(complexFraction.imaginary)), real.multiply(complexFraction.real).add(imaginary.multiply(complexFraction.imaginary)));
+    }
+
+    @Override
+    public void setPrecision(MathContext precision) {
+        real.setPrecision(precision);
+        imaginary.setPrecision(precision);
     }
 
     public ComplexFraction scale(Fraction fraction) {

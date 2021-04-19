@@ -1,6 +1,8 @@
 package yapimath;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
+import yapimath.number.ConstantHolder;
+import yapimath.number.Number;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -8,7 +10,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-public class Fraction implements Comparable<Fraction> {
+public class Fraction implements Comparable<Fraction>, Number<Fraction> {
 
     /**
      * Fraction Presets
@@ -18,6 +20,23 @@ public class Fraction implements Comparable<Fraction> {
     public static final Fraction ONE = new Fraction(1, 1);
     public static final Fraction TWO = new Fraction(2, 1);
     public static final Fraction TEN = new Fraction(10, 1);
+
+    public static final ConstantHolder<Fraction> FRACTION_CONSTANT_HOLDER = new ConstantHolder<>(ZERO, ONE, NEGATION);
+
+    @Override
+    public Fraction getZero() {
+        return ZERO;
+    }
+
+    @Override
+    public Fraction getOne() {
+        return ONE;
+    }
+
+    @Override
+    public Fraction getNegation() {
+        return NEGATION;
+    }
 
     private static final BigInteger BTWO = BigInteger.valueOf(2);
 
