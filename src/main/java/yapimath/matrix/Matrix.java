@@ -81,6 +81,10 @@ public class Matrix<T extends MatrixNumber<T>> {
         matrix4.set(1, 2, ComplexFraction.valueOf(0.05));
         matrix4.set(2, 2, ComplexFraction.valueOf(0.75));
         System.out.println(matrix4);
+        System.out.println();
+        System.out.println(matrix4.multiply(matrix4));
+        System.out.println();
+        System.out.println(matrix4.multiply(matrix4).divide(matrix4));
     }
 
     public static Matrix<Fraction> createFractionMatrix(int rows, int columns) {
